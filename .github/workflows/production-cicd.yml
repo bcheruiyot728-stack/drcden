@@ -62,15 +62,20 @@ jobs:
 
             APP_DIR="${{ secrets.PROD_APP_DIR }}"
             REPO="https://github.com/${{ github.repository }}.git"
+            SAFE_DIR="$(dirname "$APP_DIR")"
+
+            mkdir -p "$SAFE_DIR"
 
             if [ ! -d "$APP_DIR/.git" ]; then
               mkdir -p "$APP_DIR"
-              git clone "$REPO" "$APP_DIR"
+              git clone --branch main --single-branch "$REPO" "$APP_DIR"
             fi
 
             cd "$APP_DIR"
-            git fetch origin main
-            git checkout main
+            git config --global --add safe.directory "$APP_DIR" || true
+            git remote set-url origin "$REPO" || true
+            git fetch --prune origin main
+            git checkout -B main origin/main
             git reset --hard origin/main
 
             cat > .env.production << 'EOF'
