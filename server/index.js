@@ -1,6 +1,10 @@
 const path = require('path');
 const fs = require('fs');
-require('dotenv').config({ path: path.join(__dirname, '.env') });
+const dotenvPaths = [path.join(__dirname, '.env'), path.join(__dirname, '..', '.env')];
+
+for (const dotenvPath of dotenvPaths) {
+  require('dotenv').config({ path: dotenvPath, override: false });
+}
 const express = require('express');
 const cors = require('cors');
 const https = require('https');
@@ -14,8 +18,10 @@ let TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 const envPath = path.join(__dirname, '.env');
 let telegramUpdateOffset = 0;
 const telegramEnvToggle = (process.env.TELEGRAM_ENABLED || '').trim().toLowerCase();
-const hasTelegramCredentials = Boolean(TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID);
-const TELEGRAM_ENABLED = Boolean(TELEGRAM_BOT_TOKEN) || telegramEnvToggle === 'true';
+const hasBotToken = Boolean((TELEGRAM_BOT_TOKEN || '').trim());
+const hasChatId = Boolean((TELEGRAM_CHAT_ID || '').toString().trim()) && TELEGRAM_CHAT_ID !== 'YOUR_CHAT_ID_HERE';
+const hasTelegramCredentials = hasBotToken && hasChatId;
+const TELEGRAM_ENABLED = hasBotToken && telegramEnvToggle !== 'false';
 
 const isPlaceholderChatId = (chatId) => !chatId || chatId === 'YOUR_CHAT_ID_HERE';
 const normalizePhone = (phone) => (phone || '').toString().replace(/\D/g, '');
@@ -368,6 +374,34 @@ if (!TELEGRAM_ENABLED) {
 
 app.use(cors());
 app.use(express.json());
+
+app.get('/api/telegram-health', async (req, res) => {
+  const hasBotTokenNow = Boolean((process.env.TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN || '').trim());
+  const currentChatId = (TELEGRAM_CHAT_ID || '').toString().trim();
+  const hasChatIdNow = Boolean(currentChatId) && !isPlaceholderChatId(currentChatId);
+  const enabledNow = hasBotTokenNow && telegramEnvToggle !== 'false';
+
+  let autoDetectedChatId = null;
+  if (enabledNow && !hasChatIdNow) {
+    autoDetectedChatId = await detectTelegramChatId();
+  }
+
+  const resolvedChatId = autoDetectedChatId || currentChatId;
+  const healthy = enabledNow && Boolean(resolvedChatId) && !isPlaceholderChatId(resolvedChatId);
+
+  return res.json({
+    healthy,
+    enabled: enabledNow,
+    hasBotToken: hasBotTokenNow,
+    hasChatId: Boolean(resolvedChatId) && !isPlaceholderChatId(resolvedChatId),
+    chatIdPreview: resolvedChatId ? `***${String(resolvedChatId).slice(-4)}` : null,
+    message: healthy
+      ? 'Telegram notifications are configured.'
+      : !hasBotTokenNow
+        ? 'Missing TELEGRAM_BOT_TOKEN.'
+        : 'Missing TELEGRAM_CHAT_ID. Send /start to the bot and retry.'
+  });
+});
 
 app.get('/api/offres', (req, res) => {
   res.json({ offres, kit });

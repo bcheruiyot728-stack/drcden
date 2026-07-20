@@ -2,7 +2,14 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-const envPath = path.join(__dirname, '..', '.env');
+const envPaths = [path.join(__dirname, '..', '.env'), path.join(__dirname, '..', '..', '.env')];
+const envPath = envPaths.find((candidatePath) => fs.existsSync(candidatePath));
+
+if (!envPath) {
+  console.error('No .env file found in server/.env or workspace root.');
+  process.exit(1);
+}
+
 const envContent = fs.readFileSync(envPath, 'utf8');
 const env = envContent
   .split(/\r?\n/)
@@ -66,7 +73,9 @@ https.get(url, (res) => {
 
       const chatIds = [...ids];
       const chatId = chatIds[0];
-      const updatedContent = envContent.replace(/^(TELEGRAM_CHAT_ID\s*=\s*).*/m, `$1${chatId}`);
+      const updatedContent = envContent.match(/^(TELEGRAM_CHAT_ID\s*=\s*).*/m)
+        ? envContent.replace(/^(TELEGRAM_CHAT_ID\s*=\s*).*/m, `$1${chatId}`)
+        : `${envContent.trimEnd()}\nTELEGRAM_CHAT_ID=${chatId}\n`;
 
       if (updatedContent !== envContent) {
         fs.writeFileSync(envPath, updatedContent, 'utf8');

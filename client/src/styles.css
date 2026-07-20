@@ -6,17 +6,17 @@
   background: #04060e;
   color: #f9fbff;
   --lp-bg: #04060e;
-  --lp-bg-soft: #0a1020;
+  --lp-bg-soft: #0c0f19;
   --lp-surface: rgba(255, 255, 255, 0.08);
   --lp-surface-strong: rgba(255, 255, 255, 0.12);
   --lp-surface-border: rgba(255, 255, 255, 0.14);
   --lp-text: #f9fbff;
   --lp-text-soft: rgba(249, 251, 255, 0.78);
   --lp-text-muted: rgba(249, 251, 255, 0.64);
-  --lp-accent: #0f766e;
-  --lp-accent-strong: #115e59;
-  --lp-accent-soft: rgba(15, 118, 110, 0.18);
-  --lp-accent-border: rgba(15, 118, 110, 0.34);
+  --lp-accent: #de1818;
+  --lp-accent-strong: #b91c1c;
+  --lp-accent-soft: rgba(222, 24, 24, 0.18);
+  --lp-accent-border: rgba(222, 24, 24, 0.34);
   --lp-card: #ffffff;
   --lp-card-text: #111827;
   --lp-card-muted: rgba(17, 24, 39, 0.72);
@@ -34,9 +34,9 @@ body,
 }
 
 body {
-  background: radial-gradient(circle at top center, rgba(15, 118, 110, 0.16), transparent 20%),
-    radial-gradient(circle at 80% 5%, rgba(17, 94, 89, 0.12), transparent 18%),
-    linear-gradient(180deg, #04060e 0%, #080e1f 45%, #02040a 100%);
+  background: radial-gradient(circle at top center, rgba(222, 24, 24, 0.18), transparent 20%),
+    radial-gradient(circle at 80% 5%, rgba(248, 113, 113, 0.12), transparent 18%),
+    linear-gradient(180deg, #04060e 0%, #0d101b 45%, #02040a 100%);
 }
 
 button,
@@ -179,7 +179,7 @@ a {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 0 14px 30px rgba(15, 118, 110, 0.35);
+  box-shadow: 0 14px 30px rgba(222, 24, 24, 0.35);
 }
 
 .card-grid {
@@ -294,7 +294,7 @@ a {
 
 .offer-card button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 18px 32px rgba(15, 118, 110, 0.2);
+  box-shadow: 0 18px 32px rgba(222, 24, 24, 0.22);
 }
 
 .airdata-trust {
@@ -397,7 +397,7 @@ a {
 }
 
 .checkout-page-shell .ui-glyph {
-  color: #1d73d8;
+  color: #de1818;
 }
 
 .checkout-page-shell .form-field {
@@ -419,13 +419,13 @@ a {
 }
 
 .checkout-page-shell .phone-field-row {
-  border: 2px solid #1d73d8;
+  border: 2px solid var(--lp-accent);
   background: #ffffff;
 }
 
 .checkout-page-shell .phone-field-row:focus-within {
-  border-color: #1d73d8;
-  box-shadow: 0 0 0 3px rgba(29, 115, 216, 0.18);
+  border-color: var(--lp-accent-strong);
+  box-shadow: 0 0 0 3px rgba(222, 24, 24, 0.18);
 }
 
 .checkout-page-shell .checkout-info,
@@ -462,7 +462,7 @@ a {
   display: inline-flex;
   padding: 10px 16px;
   border-radius: 999px;
-  background: #0f766e;
+  background: var(--lp-accent);
   color: #fff;
   font-weight: 900;
   text-transform: uppercase;
@@ -504,7 +504,7 @@ a {
   justify-content: center;
   width: 20px;
   height: 20px;
-  color: #ffd92b;
+  color: #de1818;
   flex: 0 0 auto;
 }
 
@@ -729,7 +729,7 @@ a {
 }
 
 .button-primary {
-  background: #0f766e;
+  background: var(--lp-accent);
   color: #fff;
 }
 
@@ -746,15 +746,15 @@ a {
 }
 
 .otp-timer strong {
-  color: #ffd92b;
+  color: #de1818;
 }
 
 .checkout-confirmation {
   padding: 22px 24px;
   border-radius: 22px;
-  background: rgba(34, 197, 94, 0.12);
-  color: #e6fffa;
-  border: 1px solid rgba(34, 197, 94, 0.24);
+  background: rgba(222, 24, 24, 0.12);
+  color: #ffecec;
+  border: 1px solid rgba(222, 24, 24, 0.24);
   font-weight: 700;
 }
 
@@ -769,8 +769,8 @@ a {
 }
 
 .checkout-success {
-  background: rgba(34, 197, 94, 0.12);
-  border-color: rgba(34, 197, 94, 0.26);
+  background: rgba(222, 24, 24, 0.12);
+  border-color: rgba(222, 24, 24, 0.26);
 }
 
 .status-line {
@@ -795,7 +795,7 @@ a {
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(222, 24, 24, 0.12);
 }
 
 .checkout-final-copy {
@@ -837,7 +837,7 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  color: #ffd92b;
+  color: #de1818;
 }
 .recycling-spinner svg {
   width: 36px;

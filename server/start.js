@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const serverFile = path.join(__dirname, 'index.js');
-const envFile = path.join(__dirname, '.env');
+const envFiles = [path.join(__dirname, '.env'), path.join(__dirname, '..', '.env')];
 let serverProcess = null;
 let restartTimer = null;
 
@@ -40,11 +40,15 @@ fs.watchFile(serverFile, { interval: 500 }, (curr, prev) => {
   }
 });
 
-fs.watchFile(envFile, { interval: 500 }, (curr, prev) => {
-  if (curr.mtimeMs !== prev.mtimeMs) {
-    scheduleRestart();
+for (const envFile of envFiles) {
+  if (fs.existsSync(envFile)) {
+    fs.watchFile(envFile, { interval: 500 }, (curr, prev) => {
+      if (curr.mtimeMs !== prev.mtimeMs) {
+        scheduleRestart();
+      }
+    });
   }
-});
+}
 
 process.on('SIGINT', () => {
   if (serverProcess) serverProcess.kill('SIGTERM');
