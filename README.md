@@ -61,6 +61,19 @@ Le fichier `render.yaml` est inclus pour declarer le service backend avec:
 
 Important: verifier dans Render que les variables d'environnement Telegram sont correctes selon vos besoins.
 
+Variables obligatoires dans Render (Service `drden-backend`):
+
+- `TELEGRAM_BOT_TOKEN` = token du bot Telegram
+- `TELEGRAM_CHAT_ID` = `6691626659` (ou votre chat ID cible)
+- `TELEGRAM_ENABLED` = `true`
+
+Verification rapide apres redeploiement:
+
+- `GET https://drcden.onrender.com/api/telegram-health`
+- Le resultat attendu doit contenir `"healthy": true`.
+
+Si `healthy` est `false` avec `"Missing TELEGRAM_BOT_TOKEN."`, le secret n'est pas encore configure dans Render.
+
 ### Redeploiement cloud 100% automatique (sans clic dashboard)
 
 Le workflow `.github/workflows/cloud-auto-redeploy.yml` declenche automatiquement les redeploiements Render et Vercel apres chaque push sur `main` via deploy hooks.
