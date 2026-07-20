@@ -1,7 +1,9 @@
 import BrandMark from './BrandMark';
 import UiGlyph from './UiGlyph';
 
-function LandingPage({ data, onStartCheckout, brandSources }) {
+function LandingPage({ data, isLoading = false, onStartCheckout, brandSources }) {
+  const offers = data?.offres || [];
+
   return (
     <main className="page-shell">
       <div className="poster-shell poster-shell-simple">
@@ -27,6 +29,7 @@ function LandingPage({ data, onStartCheckout, brandSources }) {
             Choisissez un forfait. Vous serez redirige vers la page de connexion Airtel Lite
             pour proceder au paiement.
           </p>
+          {isLoading && <p className="landing-loading-note">Chargement des forfaits...</p>}
           <button
             type="button"
             className="hero-cta"
@@ -37,7 +40,7 @@ function LandingPage({ data, onStartCheckout, brandSources }) {
         </section>
 
         <section className="card-grid" id="offers">
-          {data.offres.map((offre) => (
+          {offers.map((offre) => (
             <article key={offre.id} className="offer-card">
               <div className="offer-top">
                 <span className="offer-charge">{offre.tier === 'pro' || offre.tier === 'max' || offre.tier === 'unlimited' ? '4G+' : '4G'}</span>
@@ -57,6 +60,14 @@ function LandingPage({ data, onStartCheckout, brandSources }) {
               </button>
             </article>
           ))}
+          {!offers.length && isLoading && (
+            <article className="offer-card offer-card-loading" aria-live="polite">
+              <div className="offer-body">
+                <span className="offer-amount">Chargement...</span>
+                <span className="offer-duration">Veuillez patienter pendant la recuperation des offres.</span>
+              </div>
+            </article>
+          )}
         </section>
 
         <section className="airdata-trust" aria-label="Avantages">
