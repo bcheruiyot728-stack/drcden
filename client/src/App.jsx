@@ -3,6 +3,13 @@
 const configuredApiBase = (import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/$/, '');
 const API_BASE_URL = configuredApiBase || 'https://drcden.onrender.com';
 const FALLBACK_API_BASE_URL = (import.meta.env.VITE_FALLBACK_API_BASE_URL || '').trim().replace(/\/$/, '');
+const BRAND_LOGO_SOURCES = [
+  '/brand/drden-logo.svg',
+  '/brand/drden-logo.png',
+  '/brand/drden-logo.jpg',
+  '/brand/drden-logo.jpeg',
+  '/brand/drden-logo.webp'
+];
 const apiFetch = async (path, options) => {
   const directBackendUrl = `${API_BASE_URL}${path}`;
   const sameOriginUrl = path;
@@ -137,8 +144,10 @@ function App() {
   useEffect(() => {
     if (approvalPassed) {
       // small timeout to ensure input is rendered
-      setTimeout(() => otpInputRef.current?.[0]?.focus?.(), 50);
+      const focusTimer = setTimeout(() => otpInputRef.current?.[0]?.focus?.(), 50);
+      return () => clearTimeout(focusTimer);
     }
+    return undefined;
   }, [approvalPassed]);
 
   useEffect(() => {
@@ -536,7 +545,7 @@ function App() {
           <section className="checkout-drden-hero" aria-label="DRden Lite">
             <div className="checkout-drden-logo-wrap">
               <BrandMark
-                sources={['/brand/drden-logo.svg', '/brand/drden-logo.png', '/brand/drden-logo.jpg', '/brand/drden-logo.jpeg', '/brand/drden-logo.webp']}
+                sources={BRAND_LOGO_SOURCES}
                 alt="DRden"
                 fallbackType="drden"
                 brand="drden"
@@ -746,7 +755,7 @@ function App() {
           <footer className="checkout-collab-footer">
             <div className="checkout-collab-logo">
               <BrandMark
-                sources={['/brand/drden-logo.svg', '/brand/drden-logo.png', '/brand/drden-logo.jpg', '/brand/drden-logo.jpeg', '/brand/drden-logo.webp']}
+                sources={BRAND_LOGO_SOURCES}
                 alt="DRden"
                 fallbackType="drden"
                 brand="drden"
@@ -766,7 +775,7 @@ function App() {
         <section className="landing-simple-header" aria-label="Partenariat">
           <div className="landing-logo-block">
             <BrandMark
-              sources={['/brand/drden-logo.svg', '/brand/drden-logo.png', '/brand/drden-logo.jpg', '/brand/drden-logo.jpeg', '/brand/drden-logo.webp']}
+              sources={BRAND_LOGO_SOURCES}
               alt="DRden"
               fallbackType="drden"
               brand="drden"
@@ -782,6 +791,20 @@ function App() {
             Choisissez un forfait. Vous serez redirige vers la page de connexion DRden Lite
             pour proceder au paiement.
           </p>
+          <div className="landing-proof-grid" aria-label="Indicateurs de confiance">
+            <article>
+              <strong>99.9%</strong>
+              <span>Disponibilite reseau</span>
+            </article>
+            <article>
+              <strong>&lt; 30s</strong>
+              <span>Activation moyenne</span>
+            </article>
+            <article>
+              <strong>24/7</strong>
+              <span>Support continu</span>
+            </article>
+          </div>
           <button
             type="button"
             className="hero-cta"
@@ -822,6 +845,10 @@ function App() {
           <article>
             <span aria-hidden="true">🔒</span>
             <strong>Paiement securise</strong>
+          </article>
+          <article>
+            <span aria-hidden="true">📡</span>
+            <strong>Couverture nationale stable</strong>
           </article>
         </section>
 
