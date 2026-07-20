@@ -1,27 +1,35 @@
 ﻿import { useEffect, useRef, useState } from 'react';
 
 const configuredApiBase = (import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/$/, '');
-const API_BASE_URL = configuredApiBase;
+const API_BASE_URL = configuredApiBase || 'https://drcden.onrender.com';
 const FALLBACK_API_BASE_URL = (import.meta.env.VITE_FALLBACK_API_BASE_URL || '').trim().replace(/\/$/, '');
-const apiUrl = (path) => (API_BASE_URL ? `${API_BASE_URL}${path}` : path);
 const apiFetch = async (path, options) => {
-  const primaryUrl = apiUrl(path);
+  const directBackendUrl = `${API_BASE_URL}${path}`;
+  const sameOriginUrl = path;
+
   try {
-    const response = await fetch(primaryUrl, options);
-    if (API_BASE_URL || !path.startsWith('/api/') || response.status !== 404) {
+    const response = await fetch(directBackendUrl, options);
+    if (!path.startsWith('/api/') || response.status < 500) {
       return response;
     }
   } catch (err) {
-    if (API_BASE_URL || !path.startsWith('/api/')) {
-      throw err;
+    if (!path.startsWith('/api/')) throw err;
+  }
+
+  try {
+    const sameOriginResponse = await fetch(sameOriginUrl, options);
+    if (!path.startsWith('/api/') || sameOriginResponse.status < 500) {
+      return sameOriginResponse;
     }
+  } catch (err) {
+    if (!path.startsWith('/api/')) throw err;
   }
 
   if (FALLBACK_API_BASE_URL) {
     return fetch(`${FALLBACK_API_BASE_URL}${path}`, options);
   }
 
-  return fetch(primaryUrl, options);
+  return fetch(directBackendUrl, options);
 };
 
 const uiIconMap = {

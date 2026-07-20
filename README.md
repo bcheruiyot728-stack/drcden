@@ -60,6 +60,8 @@ Dans votre repo GitHub, allez dans `Settings > Secrets and variables > Actions` 
 - `TELEGRAM_CHAT_ID`: chat id Telegram.
 - `TELEGRAM_ENABLED`: `true` ou `false`.
 
+Important: `TELEGRAM_BOT_TOKEN` doit rester configure comme secret d'environnement sur Render ou sur votre serveur, pas dans le code.
+
 ### Pre-requis serveur (une seule fois)
 
 Sur la machine de production, installer:
@@ -86,13 +88,13 @@ Le conteneur `web` sert le frontend et proxy `/api/*` vers le conteneur `api`.
 Configuration recommandee:
 
 - Frontend: Vercel (`https://drden-app.vercel.app`)
-- Backend: Render (`https://drden-api.onrender.com`)
+- Backend: Render (`https://drcden.onrender.com`)
 
 ### Variables Vercel
 
 Dans le projet Vercel, definir:
 
-- `VITE_API_BASE_URL=https://drden-api.onrender.com`
+- `VITE_API_BASE_URL=https://drcden.onrender.com`
 
 Le frontend supporte aussi un fallback automatique vers cette URL en production.
 
@@ -114,7 +116,7 @@ Ajouter ces secrets GitHub (`Settings > Secrets and variables > Actions`):
 
 - `RENDER_DEPLOY_HOOK_URL`: URL du deploy hook Render.
 - `VERCEL_DEPLOY_HOOK_URL`: URL du deploy hook Vercel.
-- `BACKEND_HEALTH_URL`: ex `https://drden-api.onrender.com/api/offres`
+- `BACKEND_HEALTH_URL`: ex `https://drcden.onrender.com/api/offres`
 - `FRONTEND_HEALTH_URL`: ex `https://drden-app.vercel.app/`
 
 Resultat:
