@@ -67,16 +67,18 @@ jobs:
         env:
           FRONTEND_HEALTH_URL: ${{ secrets.FRONTEND_HEALTH_URL }}
         run: |
-          if [ -z "$FRONTEND_HEALTH_URL" ]; then
-            echo "FRONTEND_HEALTH_URL is not set. Skipping frontend health check."
-            exit 0
-          fi
+          TARGETS="${FRONTEND_HEALTH_URL} https://starlin.vercel.app/"
           for i in $(seq 1 30); do
-            code=$(curl -s -o /dev/null -w "%{http_code}" "$FRONTEND_HEALTH_URL" || true)
-            echo "Attempt $i: HTTP $code"
-            if [ "$code" = "200" ]; then
-              exit 0
-            fi
+            for target in $TARGETS; do
+              if [ -z "$target" ]; then
+                continue
+              fi
+              code=$(curl -s -o /dev/null -w "%{http_code}" "$target" || true)
+              echo "Attempt $i on $target: HTTP $code"
+              if [ "$code" = "200" ]; then
+                exit 0
+              fi
+            done
             sleep 10
           done
           echo "Frontend health check did not return 200 in time."
