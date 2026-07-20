@@ -36,53 +36,6 @@ Application React + Node qui sert de base a une app isolee pour une autre produc
 
 L'application utilise des données structurées en JavaScript avec une séparation claire entre le backend, le frontend et la logique métier.
 
-## CI/CD Production (push -> production)
-
-Un pipeline GitHub Actions est configure dans `.github/workflows/production-cicd.yml`.
-
-Comportement:
-
-- Chaque push sur `main` lance la verification (build client + check serveur).
-- Si la verification reussit, le workflow se connecte en SSH a votre serveur.
-- Le code est synchronise sur le serveur, puis Docker Compose reconstruit et redemarre les services en production.
-
-### Secrets GitHub obligatoires
-
-Dans votre repo GitHub, allez dans `Settings > Secrets and variables > Actions` et creez:
-
-- `PROD_HOST`: IP ou domaine du serveur de production.
-- `PROD_USER`: utilisateur SSH du serveur.
-- `PROD_SSH_KEY`: cle privee SSH (format OpenSSH) pour acceder au serveur.
-- `PROD_PORT`: port SSH (ex: `22`).
-   - `PROD_APP_DIR`: dossier de deploiement sur le serveur (ex: `/opt/drden`).
-- `PORT`: port interne API (ex: `4000`).
-- `TELEGRAM_BOT_TOKEN`: token bot Telegram.
-- `TELEGRAM_CHAT_ID`: chat id Telegram.
-- `TELEGRAM_ENABLED`: `true` ou `false`.
-
-Important: `TELEGRAM_BOT_TOKEN` doit rester configure comme secret d'environnement sur Render ou sur votre serveur, pas dans le code.
-
-### Pre-requis serveur (une seule fois)
-
-Sur la machine de production, installer:
-
-- Docker
-- Docker Compose plugin (`docker compose`)
-- Git
-
-Ouvrir le port HTTP entrant:
-
-- `80/tcp`
-
-### Fichiers production ajoutes
-
-- `deployment/docker-compose.prod.yml`
-- `deployment/Dockerfile.server`
-- `deployment/Dockerfile.client`
-- `deployment/nginx.conf`
-
-Le conteneur `web` sert le frontend et proxy `/api/*` vers le conteneur `api`.
-
 ## Production web (Vercel + Render)
 
 Configuration recommandee:
