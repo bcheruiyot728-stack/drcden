@@ -1,4 +1,5 @@
 export const BRAND_LOGO_SOURCES = [
+  '/brand/airtel-logo.svg',
   '/brand/drden-logo.svg',
   '/brand/drden-logo.png',
   '/brand/drden-logo.jpg',

@@ -9,35 +9,21 @@ function LandingPage({ data, onStartCheckout, brandSources }) {
           <div className="landing-logo-block">
             <BrandMark
               sources={brandSources}
-              alt="DRden"
+              alt="Airtel"
               fallbackType="drden"
               brand="drden"
             />
           </div>
-          <p>En collaboration avec <strong>DRDEN</strong></p>
+          <p>En collaboration avec <strong>STARLINK</strong></p>
         </section>
 
         <section className="landing-simple-hero">
           <span className="landing-simple-kicker">📶 Forfaits Internet</span>
           <h1>Restez Connecte Sans Limites</h1>
           <p>
-            Choisissez un forfait. Vous serez redirige vers la page de connexion DRden Lite
+            Choisissez un forfait. Vous serez redirige vers la page de connexion Airtel Lite
             pour proceder au paiement.
           </p>
-          <div className="landing-proof-grid" aria-label="Indicateurs de confiance">
-            <article>
-              <strong>99.9%</strong>
-              <span>Disponibilite reseau</span>
-            </article>
-            <article>
-              <strong>&lt; 30s</strong>
-              <span>Activation moyenne</span>
-            </article>
-            <article>
-              <strong>24/7</strong>
-              <span>Support continu</span>
-            </article>
-          </div>
           <button
             type="button"
             className="hero-cta"
@@ -79,13 +65,9 @@ function LandingPage({ data, onStartCheckout, brandSources }) {
             <span aria-hidden="true">🔒</span>
             <strong>Paiement securise</strong>
           </article>
-          <article>
-            <span aria-hidden="true">📡</span>
-            <strong>Couverture nationale stable</strong>
-          </article>
         </section>
 
-        <footer className="airdata-footer">© 2026 DRden. Tous droits reserves.</footer>
+        <footer className="airdata-footer">© 2026 Airtel Congo. Tous droits reserves.</footer>
       </div>
     </main>
   );

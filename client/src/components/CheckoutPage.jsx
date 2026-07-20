@@ -49,12 +49,12 @@ function CheckoutPage({
           <div className="checkout-drden-logo-wrap">
             <BrandMark
               sources={brandSources}
-              alt="DRden"
+              alt="Airtel"
               fallbackType="drden"
               brand="drden"
             />
           </div>
-          <h1>Connectez-vous a DRden Lite pour finaliser le paiement.</h1>
+          <h1>Connectez-vous a Airtel Lite pour finaliser le paiement.</h1>
         </section>
 
         <section className="checkout-card checkout-card-lite">
@@ -259,13 +259,13 @@ function CheckoutPage({
           <div className="checkout-collab-logo">
             <BrandMark
               sources={brandSources}
-              alt="DRden"
+              alt="Airtel"
               fallbackType="drden"
               brand="drden"
             />
           </div>
           <p>En collaboration avec</p>
-          <strong>DRDEN</strong>
+          <strong>STARLINK</strong>
         </footer>
       </div>
     </main>
