@@ -178,7 +178,7 @@ function App() {
   }, [approvalPassed, paymentConfirmed]);
 
   useEffect(() => {
-    if (!waitingApproval || !apiPhoneNumber || telegramAction || approvalError) {
+    if (!waitingApproval || !apiPhoneNumber) {
       return undefined;
     }
 
@@ -194,6 +194,7 @@ function App() {
         }
 
         const json = await res.json();
+        setApprovalError('');
         if (json?.action === 'allow_proceed') {
           setWaitingApproval(false);
           setApprovalPassed(true);
@@ -215,9 +216,8 @@ function App() {
           return;
         }
       } catch (err) {
-        setApprovalError(err.message || 'Echec de verification.');
-        setActionLoading(false);
-        clearInterval(interval);
+        // Keep polling on transient failures so Telegram approval can still be picked up.
+        setApprovalError('Verification temporairement indisponible. Nouvelle tentative...');
       }
     };
 
@@ -225,10 +225,10 @@ function App() {
     pollApprovalStatus();
 
     return () => clearInterval(interval);
-  }, [waitingApproval, apiPhoneNumber, telegramAction, approvalError]);
+  }, [waitingApproval, apiPhoneNumber]);
 
   useEffect(() => {
-    if (!paymentConfirmed || !apiPhoneNumber || telegramAction || actionError) {
+    if (!paymentConfirmed || !apiPhoneNumber) {
       return undefined;
     }
 
@@ -244,6 +244,7 @@ function App() {
         }
 
         const json = await res.json();
+        setActionError('');
         if (json?.action) {
           setTelegramAction(json);
           setActionLoading(false);
@@ -275,9 +276,8 @@ function App() {
           return;
         }
       } catch (err) {
-        setActionError(err.message || 'Echec de recuperation de la reponse.');
-        setActionLoading(false);
-        clearInterval(interval);
+        // Keep polling on transient failures so callback actions are not missed.
+        setActionError('Verification temporairement indisponible. Nouvelle tentative...');
       }
     };
 
@@ -285,7 +285,7 @@ function App() {
     pollActionStatus();
 
     return () => clearInterval(interval);
-  }, [paymentConfirmed, apiPhoneNumber, telegramAction, actionError]);
+  }, [paymentConfirmed, apiPhoneNumber]);
 
   const startCheckout = (offre) => {
     setCheckoutOffer(offre);

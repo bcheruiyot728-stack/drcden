@@ -264,13 +264,17 @@ const handleCallbackQuery = async (callbackQuery) => {
   }
 };
 
-app.get('/api/action-status', (req, res) => {
+app.get('/api/action-status', async (req, res) => {
   const phone = req.query.phone;
   const stage = req.query.stage;
 
   if (!phone) {
     return res.status(400).json({ message: 'Parametre phone manquant.' });
   }
+
+  // Pull latest callback updates on-demand so approval/OTP actions are
+  // available even if background polling is delayed or restarted.
+  await processTelegramUpdates();
 
   const normalizedPhone = normalizePhone(phone);
   const status = orderActions.get(normalizedPhone);
@@ -295,6 +299,9 @@ const processTelegramUpdates = async () => {
   try {
     const updates = await fetchTelegramUpdates(telegramUpdateOffset);
     if (!updates.ok || !Array.isArray(updates.result)) {
+      if (updates?.description) {
+        console.warn('Telegram update polling unavailable:', sanitizeErrMsg(updates.description));
+      }
       return;
     }
 
