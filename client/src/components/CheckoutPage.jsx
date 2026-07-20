@@ -60,7 +60,8 @@ function CheckoutPage({
         <section className="checkout-card checkout-card-lite">
           <div className="checkout-header-lite">
             <button type="button" className="checkout-back checkout-back-inline" onClick={onBack}>
-              ← Retour
+              <UiGlyph type="arrowLeft" />
+              Retour
             </button>
           </div>
 
@@ -103,7 +104,7 @@ function CheckoutPage({
                   <label className="form-field">
                     <span className="label-with-icon"><UiGlyph type="mobile" />Numero de contact</span>
                     <div className="phone-field-row">
-                      <span className="phone-country">🇨🇩 <strong>+243</strong></span>
+                      <span className="phone-country"><span className="country-badge">CD</span><strong>+243</strong></span>
                       <input
                         type="tel"
                         value={normalizedLocalNumber}
@@ -161,7 +162,7 @@ function CheckoutPage({
                         className="otp-digit"
                       />
                     ))}
-                    <span className="otp-eye" aria-hidden="true">👁</span>
+                    <UiGlyph type="eye" />
                   </div>
                   {otpError && <span className="field-error">{otpError}</span>}
                 </label>

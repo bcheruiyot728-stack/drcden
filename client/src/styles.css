@@ -99,6 +99,7 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 7px;
   padding: 7px 12px;
   border-radius: 999px;
   background: var(--lp-accent-soft);
@@ -107,6 +108,12 @@ a {
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.06em;
+}
+
+.landing-simple-kicker .ui-glyph {
+  width: 14px;
+  height: 14px;
+  color: currentColor;
 }
 
 .landing-simple-hero h1 {
@@ -416,9 +423,18 @@ a {
 }
 
 .checkout-back-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: #5b626f;
   font-size: 0.9rem;
   font-weight: 700;
+}
+
+.checkout-back-inline .ui-glyph {
+  width: 14px;
+  height: 14px;
+  color: currentColor;
 }
 
 .checkout-page-shell .checkout-subtitle {
@@ -603,6 +619,22 @@ a {
   white-space: nowrap;
 }
 
+.country-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 28px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: #ecf1f7;
+  border: 1px solid #d7e0ea;
+  color: #415166;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
 .phone-country strong {
   font-size: 2rem;
   font-weight: 700;
@@ -655,9 +687,10 @@ a {
   box-shadow: 0 0 0 3px rgba(25, 118, 233, 0.2);
 }
 
-.otp-eye {
+.otp-grid .ui-glyph {
+  width: 18px;
+  height: 18px;
   color: #5b3f78;
-  font-size: 1.35rem;
   justify-self: start;
   margin-left: 2px;
 }

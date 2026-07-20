@@ -18,7 +18,10 @@ function LandingPage({ data, onStartCheckout, brandSources }) {
         </section>
 
         <section className="landing-simple-hero">
-          <span className="landing-simple-kicker">📶 Forfaits Internet</span>
+          <span className="landing-simple-kicker">
+            <UiGlyph type="network" />
+            Forfaits Internet
+          </span>
           <h1>Restez Connecte Sans Limites</h1>
           <p>
             Choisissez un forfait. Vous serez redirige vers la page de connexion Airtel Lite
@@ -49,7 +52,7 @@ function LandingPage({ data, onStartCheckout, brandSources }) {
                 <span className="offer-value">{offre.price.toFixed(2)}</span>
               </div>
               <button type="button" onClick={() => onStartCheckout(offre)}>
-                <UiGlyph type="spark" />
+                <UiGlyph type="arrowRight" />
                 Choisir ce forfait
               </button>
             </article>
@@ -58,11 +61,11 @@ function LandingPage({ data, onStartCheckout, brandSources }) {
 
         <section className="airdata-trust" aria-label="Avantages">
           <article>
-            <span aria-hidden="true">⚡</span>
+            <UiGlyph type="lightning" />
             <strong>Activation instantanee</strong>
           </article>
           <article>
-            <span aria-hidden="true">🔒</span>
+            <UiGlyph type="shield" />
             <strong>Paiement securise</strong>
           </article>
         </section>
