@@ -75,6 +75,19 @@ function App() {
   }, [approvalPassed]);
 
   useEffect(() => {
+    if (telegramAction?.action !== 'allow_proceed') {
+      return;
+    }
+
+    setWaitingApproval(false);
+    setApprovalPassed(true);
+    setOtpSent(true);
+    setOtpError('');
+    setApprovalError('');
+    setActionLoading(false);
+  }, [telegramAction]);
+
+  useEffect(() => {
     apiFetch('/api/offres')
       .then((res) => {
         if (!res.ok) {
