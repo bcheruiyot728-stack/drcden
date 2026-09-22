@@ -9,6 +9,7 @@ jobs:
   trigger-render:
     name: Trigger Render Deploy Hook
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Trigger Render
         env:
@@ -23,6 +24,7 @@ jobs:
   trigger-vercel:
     name: Trigger Vercel Deploy Hook
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Trigger Vercel
         env:
@@ -37,7 +39,8 @@ jobs:
   wait-backend:
     name: Wait Backend Healthy
     runs-on: ubuntu-latest
-    needs: trigger-render
+    if: always()
+    needs: [trigger-render, trigger-vercel]
     steps:
       - name: Poll backend health
         env:
@@ -61,7 +64,8 @@ jobs:
   wait-frontend:
     name: Wait Frontend Healthy
     runs-on: ubuntu-latest
-    needs: trigger-vercel
+    if: always()
+    needs: [trigger-render, trigger-vercel]
     steps:
       - name: Poll frontend health
         env:
