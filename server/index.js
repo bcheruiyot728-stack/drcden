@@ -328,6 +328,48 @@ const processTelegramUpdates = async () => {
   }
 };
 
+const deleteTelegramWebhook = () => {
+  if (!TELEGRAM_ENABLED) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    const body = JSON.stringify({ drop_pending_updates: false });
+    const req = https.request({
+      hostname: 'api.telegram.org',
+      path: `/bot${TELEGRAM_BOT_TOKEN}/deleteWebhook`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      res.on('end', () => {
+        try {
+          const response = JSON.parse(data);
+          if (!response.ok) {
+            console.warn('Telegram webhook cleanup unavailable:', sanitizeErrMsg(response.description));
+          }
+        } catch (err) {
+          console.warn('Telegram webhook cleanup failed:', sanitizeErrMsg(err));
+        }
+        resolve();
+      });
+    });
+
+    req.on('error', (err) => {
+      console.warn('Telegram webhook cleanup network error:', sanitizeErrMsg(err));
+      resolve();
+    });
+    req.write(body);
+    req.end();
+  });
+};
+
 if (TELEGRAM_ENABLED) {
   setInterval(() => {
     processTelegramUpdates();
@@ -387,6 +429,7 @@ if (!TELEGRAM_ENABLED) {
   }
 
   (async () => {
+    await deleteTelegramWebhook();
     await detectTelegramChatId();
   })();
 }
