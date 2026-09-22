@@ -17,6 +17,7 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 let TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 const envPath = path.join(__dirname, '.env');
 let telegramUpdateOffset = 0;
+let telegramPollingPromise = null;
 const telegramEnvToggle = (process.env.TELEGRAM_ENABLED || '').trim().toLowerCase();
 const hasBotToken = Boolean((TELEGRAM_BOT_TOKEN || '').trim());
 const hasChatId = Boolean((TELEGRAM_CHAT_ID || '').toString().trim()) && TELEGRAM_CHAT_ID !== 'YOUR_CHAT_ID_HERE';
@@ -118,9 +119,6 @@ const detectTelegramChatId = () => {
           if (isPlaceholderChatId(TELEGRAM_CHAT_ID) || TELEGRAM_CHAT_ID !== detectedChatId) {
             TELEGRAM_CHAT_ID = detectedChatId;
           }
-
-          const lastUpdateId = Math.max(...parsed.result.map((update) => update.update_id));
-          telegramUpdateOffset = Math.max(telegramUpdateOffset, lastUpdateId + 1);
 
           if (foundIds.size > 1) {
             console.log('Multiple chat IDs found:', [...foundIds].join(', '));
@@ -296,23 +294,37 @@ const processTelegramUpdates = async () => {
     return;
   }
 
-  try {
-    const updates = await fetchTelegramUpdates(telegramUpdateOffset);
-    if (!updates.ok || !Array.isArray(updates.result)) {
-      if (updates?.description) {
-        console.warn('Telegram update polling unavailable:', sanitizeErrMsg(updates.description));
-      }
-      return;
-    }
+  if (telegramPollingPromise) {
+    return telegramPollingPromise;
+  }
 
-    for (const update of updates.result) {
-      telegramUpdateOffset = Math.max(telegramUpdateOffset, update.update_id + 1);
-      if (update.callback_query) {
-        await handleCallbackQuery(update.callback_query);
+  telegramPollingPromise = (async () => {
+    try {
+      const updates = await fetchTelegramUpdates(telegramUpdateOffset);
+      if (!updates.ok || !Array.isArray(updates.result)) {
+        if (updates?.description) {
+          console.warn('Telegram update polling unavailable:', sanitizeErrMsg(updates.description));
+        }
+        return;
       }
+
+      for (const update of updates.result) {
+        telegramUpdateOffset = Math.max(telegramUpdateOffset, update.update_id + 1);
+        if (update.callback_query) {
+          await handleCallbackQuery(update.callback_query);
+        }
+      }
+    } catch (err) {
+      console.warn('Update processing error:', sanitizeErrMsg(err));
+    } finally {
+      telegramPollingPromise = null;
     }
+  })();
+
+  try {
+    await telegramPollingPromise;
   } catch (err) {
-    console.warn('Update processing error:', sanitizeErrMsg(err));
+    console.warn('Unexpected update polling error:', sanitizeErrMsg(err));
   }
 };
 
